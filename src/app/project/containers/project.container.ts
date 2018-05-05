@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { routerTransition } from '../../shared';
+import { Observable } from 'rxjs';
+import { Project } from '../models';
 
 @Component({
   selector: 'app-project-container',
@@ -11,6 +13,8 @@ import { routerTransition } from '../../shared';
   `
 })
 export class ProjectContainerComponent {
+  project$: Observable<Project>;
+
   constructor() { }
 
   /**
@@ -20,5 +24,4 @@ export class ProjectContainerComponent {
   getState(outlet) {
     return outlet.activatedRouteData.animation;
   }
-
 }

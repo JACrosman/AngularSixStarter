@@ -8,7 +8,6 @@ import { CoreContainerComponent } from './core/containers/core.container';
 
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
-import { ProjectModule } from './projects/project.module';
 
 @NgModule({
   declarations: [
@@ -20,8 +19,7 @@ import { ProjectModule } from './projects/project.module';
 
     // App Modules
     SharedModule.forRoot(),
-    CoreModule.forRoot(),
-    ProjectModule.forRoot()
+    CoreModule.forRoot()
   ],
   providers: [],
   bootstrap: [CoreContainerComponent]

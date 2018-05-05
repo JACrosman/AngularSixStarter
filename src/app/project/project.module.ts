@@ -3,17 +3,25 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 import { SharedModule } from '../shared';
+import { ProjectListContainerComponent } from './containers/project-list.container';
+import { ProjectContainerComponent } from './containers/project.container';
+import { ProjectListComponent } from './components/project-list/project-list.component';
+import { routes } from './project.routes';
 
 export const ENTRY_COMPONENTS = [
 ];
 
 export const COMPONENTS = [
-  ...ENTRY_COMPONENTS
+  ...ENTRY_COMPONENTS,
+  ProjectListContainerComponent,
+  ProjectContainerComponent,
+
+  ProjectListComponent
 ];
 
 @NgModule({
   imports: [
-    RouterModule,
+    RouterModule.forChild(routes),
 
     SharedModule
   ],

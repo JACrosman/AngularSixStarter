@@ -2,24 +2,19 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { CoreComponent } from './components/core/core.component';
-import { CoreContainerComponent } from './containers/core.container';
 import { SharedModule } from '../shared';
-import { CoreStateService } from './services/core.state.service';
-import { routes } from './core.routes';
+import { routes } from './auth.routes';
 
 export const ENTRY_COMPONENTS = [
 ];
 
 export const COMPONENTS = [
-  ...ENTRY_COMPONENTS,
-  CoreContainerComponent,
-  CoreComponent
+  ...ENTRY_COMPONENTS
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { useHash: true }),
+    RouterModule.forChild(routes),
 
     SharedModule
   ],
@@ -27,12 +22,11 @@ export const COMPONENTS = [
   exports: COMPONENTS,
   entryComponents: ENTRY_COMPONENTS
 })
-export class CoreModule {
+export class AuthModule {
   static forRoot() {
     return {
-      ngModule: CoreModule,
+      ngModule: AuthModule,
       providers: [
-        CoreStateService
       ]
     };
   }
