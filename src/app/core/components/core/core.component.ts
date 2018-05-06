@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { routerTransition } from '../../../shared/';
 
 @Component({
@@ -8,6 +8,8 @@ import { routerTransition } from '../../../shared/';
   styleUrls: ['./core.component.scss']
 })
 export class CoreComponent implements OnInit {
+  @Input()
+  title: string;
 
   constructor() { }
 

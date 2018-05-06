@@ -5,7 +5,7 @@ export class CoreConfig {
   /**
    * Title to display in the navbar
    */
-  title?: String;
+  title?: string;
 
   /**
    * Flag for back button visibility

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 import { Observable, of } from 'rxjs';
 
 import { Project } from '../models';
+import { CoreStateService } from '../../core/services/core.state.service';
 
 /**
  * Component - ProjectsContainerComponent
@@ -24,9 +25,11 @@ export class ProjectListContainerComponent {
   projects$: Observable<Project[]>;
 
   constructor(
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private coreService: CoreStateService
   ) {
     this.projects$ = of([]);
+    this.coreService.setTitle('Projects');
     // this.projects$ = this.projectService.loadProjects();
   }
 

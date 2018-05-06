@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { Project } from '../../models';
+import { CoreStateService } from '../../../core';
 
 /**
  * Component - ProjectListComponent
@@ -10,6 +11,7 @@ import { Project } from '../../models';
  */
 @Component({
   selector: 'app-project-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.scss']
 })
@@ -28,7 +30,8 @@ export class ProjectListComponent {
 
   constructor(
     public dialog: MatDialog
-  ) {}
+  ) {
+  }
 
   /**
    * Show the create project dialog

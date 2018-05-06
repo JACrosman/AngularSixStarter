@@ -1,6 +1,6 @@
 <mat-sidenav-container fullScreen>
   <mat-toolbar color="primary">
-    <span>Waypoints Authoring</span>
+    <span>{{title}}</span>
   </mat-toolbar>
   <div class="content" [@routerTransition]="getState(o)">
       <router-outlet #o="outlet"></router-outlet>
