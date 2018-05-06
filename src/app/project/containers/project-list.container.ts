@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 
 import { Project } from '../models';
 import { CoreStateService } from '../../core/services/core.state.service';
+import { ProjectStateService } from '../services/project.state.service';
 
 /**
  * Component - ProjectsContainerComponent
@@ -26,11 +27,13 @@ export class ProjectListContainerComponent {
 
   constructor(
     public dialog: MatDialog,
-    private coreService: CoreStateService
+    private coreService: CoreStateService,
+    private projectService: ProjectStateService
   ) {
-    this.projects$ = of([]);
     this.coreService.setTitle('Projects');
-    // this.projects$ = this.projectService.loadProjects();
+    this.projects$ = this.projectService.getProjects();
+
+    this.projectService.loadProjects();
   }
 
   /** Add a new project */

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { Store } from '@ngxs/store';
 
-import { SetTitle, CoreState } from '../state';
+import { SetTitle, DisplayError, CoreState } from '../state';
 
 @Injectable()
 export class CoreStateService {
@@ -11,6 +11,10 @@ export class CoreStateService {
 
     public setTitle(title: string): void {
         this.store.dispatch(new SetTitle(title));
+    }
+
+    public notificationError(message: string): void {
+        this.store.dispatch(new DisplayError(message));
     }
 
     public getTitle(): Observable<string> {

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { State, Action, Selector, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -8,20 +9,23 @@ import { Project } from '../models';
   LoadProject,
   CreateProject,
 } from './project.actions';
-import { HttpClient } from '@angular/common/http';
+import { CoreStateService } from '../../core';
 
 export interface ProjectsStateModel {
   projects: Project[];
 }
 
 @State<ProjectsStateModel>({
-  name: 'config',
+  name: 'projects',
   defaults: {
     projects: []
   }
 })
-export class ProjectState {
-  constructor(private http: HttpClient) { }
+export class ProjectsState {
+  constructor(
+    private http: HttpClient,
+    private coreService: CoreStateService
+  ) { }
 
   @Selector()
   static projects(state: ProjectsStateModel) {
@@ -34,7 +38,7 @@ export class ProjectState {
       tap((projects: any) => {
         ctx.patchState({ projects });
       }),
-      catchError(error => of(window.alert('could not add todo'))),
+      catchError(error => of(this.coreService.notificationError('Failed to load projects'))),
     );
   }
 }

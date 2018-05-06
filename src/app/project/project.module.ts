@@ -7,6 +7,8 @@ import { ProjectListContainerComponent } from './containers/project-list.contain
 import { ProjectContainerComponent } from './containers/project.container';
 import { ProjectListComponent } from './components/project-list/project-list.component';
 import { routes } from './project.routes';
+import { ProjectStateModule } from './state/project.state.module';
+import { ProjectStateService } from './services';
 
 export const ENTRY_COMPONENTS = [
 ];
@@ -23,18 +25,16 @@ export const COMPONENTS = [
   imports: [
     RouterModule.forChild(routes),
 
-    SharedModule
+    SharedModule,
+
+    ProjectStateModule
   ],
   declarations: COMPONENTS,
   exports: COMPONENTS,
-  entryComponents: ENTRY_COMPONENTS
+  entryComponents: ENTRY_COMPONENTS,
+  providers: [
+    ProjectStateService
+  ]
 })
 export class ProjectModule {
-  static forRoot() {
-    return {
-      ngModule: ProjectModule,
-      providers: [
-      ]
-    };
-  }
 }
