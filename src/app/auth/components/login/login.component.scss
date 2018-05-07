@@ -1,0 +1,10 @@
+mat-card {
+    margin: 16px;
+    .mat-card-content {
+        display: flex;
+        flex-direction: column;
+    }
+    .mat-card-content>* {
+        width: 100%;
+    }
+}

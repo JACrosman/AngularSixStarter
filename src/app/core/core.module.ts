@@ -3,13 +3,16 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 
 import { CoreComponent } from './components/core/core.component';
 import { CoreContainerComponent } from './containers/core.container';
-import { SharedModule } from '../shared';
+import { SharedModule, HttpService } from '../shared';
 import { CoreStateService } from './services/core.state.service';
 import { routes } from './core.routes';
 import { CoreState } from './state';
+import { AuthModule } from '../auth/auth.module';
+import { AuthState } from '../auth/state/auth.state';
 
 export const ENTRY_COMPONENTS = [
 ];
@@ -22,12 +25,19 @@ export const COMPONENTS = [
 
 @NgModule({
   imports: [
+    SharedModule.forRoot(),
+    AuthModule.forRoot(),
+
     RouterModule.forRoot(routes, { useHash: true }),
 
-    NgxsModule.forRoot([CoreState]),
-    NgxsReduxDevtoolsPluginModule.forRoot(),
-
-    SharedModule
+    NgxsModule.forRoot([
+      CoreState,
+      AuthState
+    ]),
+    NgxsReduxDevtoolsPluginModule.forRoot({}),
+    NgxsStoragePluginModule.forRoot({
+      key: 'auth.token'
+    })
   ],
   declarations: COMPONENTS,
   exports: COMPONENTS,
@@ -38,7 +48,8 @@ export class CoreModule {
     return {
       ngModule: CoreModule,
       providers: [
-        CoreStateService
+        CoreStateService,
+        HttpService
       ]
     };
   }

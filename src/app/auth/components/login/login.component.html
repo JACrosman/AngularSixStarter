@@ -1,0 +1,20 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  <mat-card class="example-card">
+    <mat-card-header>
+      <mat-card-title>Waypoints Login</mat-card-title>
+      <mat-card-subtitle>Login below with your username and password</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field>
+        <input matInput placeholder="Username" formControlName="username">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="password" placeholder="Password" formControlName="password">
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit" [disabled]="pending || !form.valid">LOGIN</button>
+    </mat-card-actions>
+  </mat-card>
+  <p>{{errorMessage}}</p>
+</form>

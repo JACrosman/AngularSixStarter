@@ -3,6 +3,7 @@ import { State, Action, Selector, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
+import { environment } from '../../../environments/environment';
 import { Project } from '../models';
 ​import {
   LoadProjects,
@@ -34,7 +35,7 @@ export class ProjectsState {
 
   @Action(LoadProjects)
   getProjects(ctx: StateContext<ProjectsStateModel>, action: LoadProjects) {
-    return this.http.get('/api/projects').pipe(
+    return this.http.get(environment.api_url + '/project').pipe(
       tap((projects: any) => {
         ctx.patchState({ projects });
       }),

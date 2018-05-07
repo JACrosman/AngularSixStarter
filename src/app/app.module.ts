@@ -7,7 +7,6 @@ import { RouterModule } from '@angular/router';
 import { CoreContainerComponent } from './core/containers/core.container';
 
 import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -17,8 +16,6 @@ import { SharedModule } from './shared/shared.module';
     BrowserAnimationsModule,
     HttpClientModule,
 
-    // App Modules
-    SharedModule.forRoot(),
     CoreModule.forRoot()
   ],
   providers: [],

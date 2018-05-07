@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
+import { LoginContainerComponent } from './containers/login.container';
 
 export const routes: Routes = [
   {
-    // path: '', component: ProjectListContainerComponent
+    path: 'login', component: LoginContainerComponent
   }
 ];
