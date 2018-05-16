@@ -13,6 +13,7 @@ import { routes } from './core.routes';
 import { CoreState } from './state';
 import { AuthModule } from '../auth/auth.module';
 import { AuthState } from '../auth/state/auth.state';
+import { NgxsApiPluginModule } from '../shared/api-plugin/api.module';
 
 export const ENTRY_COMPONENTS = [
 ];
@@ -30,6 +31,7 @@ export const COMPONENTS = [
 
     RouterModule.forRoot(routes, { useHash: true }),
 
+    NgxsApiPluginModule.forRoot(),
     NgxsModule.forRoot([
       CoreState,
       AuthState

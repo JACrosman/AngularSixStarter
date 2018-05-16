@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 
 import { Project } from '../../models';
 import { CoreStateService } from '../../../core';
+import { ProjectNewComponent } from '../new/project-new.component';
 
 /**
  * Component - ProjectListComponent
@@ -37,5 +38,13 @@ export class ProjectListComponent {
    * Show the create project dialog
    */
   add() {
+    const dialogRef = this.dialog.open(ProjectNewComponent, {
+    });
+
+    dialogRef.afterClosed().subscribe((project) => {
+      if (project) {
+        this.addProject.emit(project);
+      }
+    });
   }
 }

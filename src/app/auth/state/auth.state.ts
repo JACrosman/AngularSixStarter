@@ -1,5 +1,6 @@
 
 import { MatSnackBar } from '@angular/material';
+import { Router } from '@angular/router';
 import { State, Action, Selector, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -21,7 +22,8 @@ export class AuthStateModel {
 export class AuthState {
   constructor(
     private authService: AuthHttpService,
-    private coreService: CoreStateService
+    private coreService: CoreStateService,
+    private router: Router
   ) { }
 
   @Selector()
@@ -38,6 +40,8 @@ export class AuthState {
     return this.authService.login(action.payload).pipe(
       tap((result: { token: string }) => {
         ctx.patchState({ token: result.token });
+
+        this.router.navigate(['']);
       }),
       catchError(err => {
         ctx.patchState({ error: err });

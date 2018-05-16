@@ -7,14 +7,14 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { AuthStateService } from './auth.state.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+    constructor(private authService: AuthStateService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-        const idToken = localStorage.getItem(environment.token_name);
+        const idToken = this.authService.getToken();
 
         if (idToken) {
             const cloned = req.clone({

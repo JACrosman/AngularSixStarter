@@ -1,0 +1,12 @@
+<form [formGroup]="projectForm" (ngSubmit)="submitForm()">
+  <mat-form-field>
+    <input matInput formControlName="name" placeholder="Name">
+  </mat-form-field>
+  <mat-form-field>
+    <textarea matInput formControlName="description" placeholder="Description"></textarea>
+  </mat-form-field>
+  <div>
+    <button mat-raised-button color="primary" (click)="close(null)" type="button">Cancel</button>
+    <button mat-raised-button color="primary"  [disabled]="projectForm.pristine || projectForm.invalid">Save</button>
+  </div>
+</form>
