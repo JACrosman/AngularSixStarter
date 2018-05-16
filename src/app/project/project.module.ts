@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NgxsModule } from '@ngxs/store';
 
 import { SharedModule } from '../shared';
@@ -14,7 +15,7 @@ import { ProjectContainerComponent } from './containers/project.container';
 // Components
 import { ProjectNewComponent } from './components/new/project-new.component';
 import { ProjectListComponent } from './components/project-list/project-list.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ProjectModulesComponent } from './components/modules/modules.component';
 
 export const ENTRY_COMPONENTS = [
   ProjectNewComponent
@@ -25,6 +26,7 @@ export const COMPONENTS = [
   ProjectListContainerComponent,
   ProjectContainerComponent,
 
+  ProjectModulesComponent,
   ProjectListComponent
 ];
 

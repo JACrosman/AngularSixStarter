@@ -26,7 +26,6 @@ export class ProjectListContainerComponent {
   projects$: Observable<Project[]>;
 
   constructor(
-    public dialog: MatDialog,
     private projectService: ProjectState
   ) {
     this.projects$ = this.projectService.entities$;

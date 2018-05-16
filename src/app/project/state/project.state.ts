@@ -11,7 +11,6 @@ import { environment } from '../../../environments/environment';
 import { Project } from '../models';
 
 export interface ProjectStateModel extends ApiEntityState<Project> {
-  isPublishing?: boolean;
 }
 
 @State<ProjectStateModel>({

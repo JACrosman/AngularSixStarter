@@ -1,5 +1,5 @@
 <mat-nav-list>
-  <a mat-list-item *ngFor="let project of projects" [routerLink]="[project._id]"> {{ project.name }} </a>
+  <a mat-list-item *ngFor="let course of courses" [routerLink]="[course._id]"> {{ course.name }} </a>
 </mat-nav-list>
 
 <button mat-fab class="add" color="accent" (click)="add()">
