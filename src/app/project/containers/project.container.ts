@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { routerTransition } from '../../shared';
 import { Observable } from 'rxjs';
 
-import { Project } from '../models';
+import { Project } from '../../shared/models';
 import { ProjectState } from '../state/project.state';
 import { ActivatedRoute } from '@angular/router';
 

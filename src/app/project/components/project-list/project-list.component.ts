@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import { Project } from '../../models';
+import { Project } from '../../../shared/models';
 import { CoreStateService } from '../../../core';
 import { ProjectNewComponent } from '../new/project-new.component';
 

@@ -8,7 +8,7 @@ import {
 } from '../../shared/api-plugin';
 
 import { environment } from '../../../environments/environment';
-import { Project } from '../models';
+import { Project } from '../../shared/models';
 
 export interface ProjectStateModel extends ApiEntityState<Project> {
 }

@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest, Subscription } from 'rxjs';
 
-import { Course } from '../models';
+import { Course, Project } from '../../shared/models';
+import { ProjectState } from '../../project/state/project.state';
 import { CoreStateService } from '../../core/services/core.state.service';
 import { CourseState } from '../state/course.state';
+import { mergeMap } from 'rxjs/operators';
 
 /**
  * Component - CoursesContainerComponent
@@ -15,20 +17,26 @@ import { CourseState } from '../state/course.state';
   selector: 'app-course-list-container',
   template: `
     <app-course-list
-      [courses]="courses"
+      [project]="data.project"
+      [courses]="data.courses"
       (addCourse)="onAddCourse($event)"
-      *ngIf="courses$ | async; let courses"
+      *ngIf="data$ | async; let data"
     >
     </app-course-list>`
 })
 export class CourseListContainerComponent {
-  /** Observable list of courses */
-  courses$: Observable<Course[]>;
+  /** Observables */
+  data$: Observable<{ project: Project, courses: Course[] }>;
 
   constructor(
-    private courseService: CourseState
+    private courseService: CourseState,
+    private projectService: ProjectState
   ) {
-    this.courses$ = this.courseService.entities$;
+    this.data$ = combineLatest(
+      this.projectService.entity$,
+      this.courseService.entities$,
+      (project, courses) => ({ project, courses })
+    );
 
     this.courseService.query();
   }

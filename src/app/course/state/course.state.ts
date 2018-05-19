@@ -8,7 +8,7 @@ import {
 } from '../../shared/api-plugin';
 
 import { environment } from '../../../environments/environment';
-import { Course } from '../models';
+import { Course } from '@authoring/shared';
 
 export interface CourseStateModel extends ApiEntityState<Course> {
 }

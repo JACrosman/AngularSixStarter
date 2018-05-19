@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, asapScheduler, of } from 'rxjs';
+import { Observable, asapScheduler, of, Subject } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
 import { Store, Select, Action, StateContext } from '@ngxs/store';
 
@@ -76,25 +76,32 @@ export function generateUrl(info: RequestInfo, route: string, params?: ParamMap)
 }
 
 export class ApiBaseService<T, S extends ApiEntityState<T>> {
+  // Selectors
   entities$: Observable<T[]>;
   entity$: Observable<T>;
   loading$: Observable<boolean>;
   loaded$: Observable<boolean>;
   error$: Observable<any>;
 
-  requests: { [key: string]: RequestInfo };
-  adapter: EntityAdapter<T>;
-  toUpdate: any;
+  // Events
+  onError$: Subject<any> = new Subject();
+  onSuccess$: Subject<any> = new Subject();
+  onRequest$: Subject<any> = new Subject();
 
-  get path() {
+  // Internals
+  private requests: { [key: string]: RequestInfo };
+  private adapter: EntityAdapter<T>;
+  private toUpdate: any;
+
+  private get path() {
     return this.config.path;
   }
 
-  get store() {
+  private get store() {
     return Injectors.store;
   }
 
-  get httpClient() {
+  private get httpClient() {
     return Injectors.httpClient;
   }
 
@@ -107,9 +114,7 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
     };
   }
 
-  constructor(
-    private config: ApiServiceConfig
-  ) {
+  constructor(private config: ApiServiceConfig) {
     this.requests = {};
     this.adapter = createEntityAdapter<T>({
       selectId: this.config.idSelector
@@ -117,7 +122,7 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
     this.toUpdate = toUpdateFactory(this.config.idSelector);
 
     this.createRequest({ name: 'query', path: '', method: 'GET' });
-    this.createRequest({ name: 'get', path: '/:id', method: 'GET'});
+    this.createRequest({ name: 'get', path: '/:id', method: 'GET' });
     this.createRequest({ name: 'post', path: '', method: 'POST' });
     this.createRequest({ name: 'put', path: ':/id', method: 'PUT' });
     this.createRequest({ name: 'delete', path: ':/id', method: 'DELETE' });
@@ -126,17 +131,13 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
       this.getState(state).ids.map(id => this.getState(state).entities[id])
     );
     this.entity$ = this.store.select(
-      state => this.getState(state).entityId && this.getState(state).entities[this.getState(state).entityId]
+      state =>
+        this.getState(state).entityId &&
+        this.getState(state).entities[this.getState(state).entityId]
     );
-    this.loading$ = this.store.select(
-      state => this.getState(state).loading
-    );
-    this.loaded$ = this.store.select(
-      state => this.getState(state).loaded
-    );
-    this.error$ = this.store.select(
-      state => this.getState(state).error
-    );
+    this.loading$ = this.store.select(state => this.getState(state).loading);
+    this.loaded$ = this.store.select(state => this.getState(state).loaded);
+    this.error$ = this.store.select(state => this.getState(state).error);
   }
 
   protected createRequest(requestInfo: RequestInfo) {
@@ -190,9 +191,39 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
     return { ...action.payload.params, ...params };
   }
 
-  private queryHandler(ctx: StateContext<ApiEntityState<T>>, action: any) {
+  /**
+   * Root request handler that all request methods must pass through
+   * @param method
+   */
+  requestHandler(ctx: StateContext<ApiEntityState<T>>, action): Observable<any> {
     const requestInfo = this.requests[action.type];
+    const method = requestInfo.method.toLowerCase();
 
+    this.onRequest$.next(requestInfo);
+
+    return this.httpClient[method](
+      generateUrl(requestInfo, this.config.route, this.getParams(action)),
+      action.payload ? action.payload.data : undefined
+    ).pipe(
+      map((entities: T[]) =>
+        asapScheduler.schedule(() =>
+          ctx.dispatch(createSuccess(this.config.path, requestInfo.name, entities))
+        )
+      ),
+      catchError(error =>
+        of(
+          asapScheduler.schedule(() =>
+            ctx.dispatch(createFailure(this.config.path, requestInfo.name, error))
+          )
+        )
+      ));
+  }
+
+  successHandler() {}
+
+  failureHandler() {}
+
+  private queryHandler(ctx: StateContext<ApiEntityState<T>>, action: any) {
     ctx.patchState({
       loaded: false,
       loading: true,
@@ -201,22 +232,7 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
       entityId: null
     });
 
-    return this.httpClient
-      .get(generateUrl(requestInfo, this.config.route, this.getParams(action)))
-      .pipe(
-        map((entities: T[]) =>
-          asapScheduler.schedule(() =>
-            ctx.dispatch(createSuccess(this.config.path, 'query', entities))
-          )
-        ),
-        catchError(error =>
-          of(
-            asapScheduler.schedule(() =>
-              ctx.dispatch(createFailure(this.config.path, 'query', error))
-            )
-          )
-        )
-      );
+    return this.requestHandler(ctx, action);
   }
 
   protected querySuccessHandler(ctx: StateContext<ApiEntityState<T>>, action) {
@@ -229,24 +245,7 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
   }
 
   protected getHandler(ctx: StateContext<ApiEntityState<T>>, action: any) {
-    const requestInfo = this.requests[action.type];
-
-    return this.httpClient
-      .get(generateUrl(requestInfo, this.config.route, this.getParams(action)))
-      .pipe(
-        map((entity: T) =>
-          asapScheduler.schedule(() =>
-            ctx.dispatch(createSuccess(this.config.path, 'get', entity))
-          )
-        ),
-        catchError(error =>
-          of(
-            asapScheduler.schedule(() =>
-              ctx.dispatch(createFailure(this.config.path, 'get', error))
-            )
-          )
-        )
-      );
+    return this.requestHandler(ctx, action);
   }
 
   protected getSuccessHandler(ctx: StateContext<ApiEntityState<T>>, action) {
@@ -265,65 +264,27 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
   }
 
   protected postHandler(ctx: StateContext<ApiEntityState<T>>, action: any) {
-    const requestInfo = this.requests[action.type];
-
-    return this.httpClient
-      .post(generateUrl(requestInfo, this.config.route, this.getParams(action)), action.payload.data)
-      .pipe(
-        map((entity: T) =>
-          asapScheduler.schedule(() =>
-            ctx.dispatch(createSuccess(this.config.path, 'post', entity))
-          )
-        ),
-        catchError(error =>
-          of(
-            asapScheduler.schedule(() =>
-              ctx.dispatch(createFailure(this.config.path, 'post', error))
-            )
-          )
-        )
-      );
+    return this.requestHandler(ctx, action);
   }
 
   protected postSuccessHandler(ctx: StateContext<ApiEntityState<T>>, action) {
     const state = ctx.getState();
 
-    ctx.patchState(
-      this.adapter.addOne(action.payload, state)
-    );
+    ctx.patchState(this.adapter.addOne(action.payload, state));
   }
 
   protected postFailureHandler(ctx, action) {
     ctx.patchState({ error: action.error });
   }
 
-  protected putHandler(ctx: StateContext<ApiEntityState<T>>, action: any, name?: string) {
-    const requestInfo = this.requests[action.type];
-
-    return this.httpClient
-      .put(generateUrl(requestInfo, this.config.route, this.getParams(action)), action.payload.data)
-      .pipe(
-        map((entity: T) =>
-          asapScheduler.schedule(() =>
-            ctx.dispatch(createSuccess(this.config.path, name || 'put', entity))
-          )
-        ),
-        catchError(error =>
-          of(
-            asapScheduler.schedule(() =>
-              ctx.dispatch(createFailure(this.config.path, name || 'put', error))
-            )
-          )
-        )
-      );
+  protected putHandler(ctx: StateContext<ApiEntityState<T>>, action: any) {
+    return this.requestHandler(ctx, action);
   }
 
   protected putSuccessHandler(ctx: StateContext<ApiEntityState<T>>, action) {
     const state = ctx.getState();
 
-    ctx.patchState(
-      this.adapter.updateOne(this.toUpdate(action.payload), state)
-    );
+    ctx.patchState(this.adapter.updateOne(this.toUpdate(action.payload), state));
   }
 
   protected putFailureHandler(ctx, action) {
@@ -331,32 +292,13 @@ export class ApiBaseService<T, S extends ApiEntityState<T>> {
   }
 
   protected deleteHandler(ctx: StateContext<ApiEntityState<T>>, action: any) {
-    const requestInfo = this.requests[action.type];
-
-    return this.httpClient
-      .delete(generateUrl(requestInfo, this.config.route, this.getParams(action)))
-      .pipe(
-        map((entity: T) =>
-          asapScheduler.schedule(() =>
-            ctx.dispatch(createSuccess(this.config.path, 'delete', entity))
-          )
-        ),
-        catchError(error =>
-          of(
-            asapScheduler.schedule(() =>
-              ctx.dispatch(createFailure(this.config.path, 'delete', error))
-            )
-          )
-        )
-      );
+    return this.requestHandler(ctx, action);
   }
 
   protected deleteSuccessHandler(ctx: StateContext<ApiEntityState<T>>, action) {
     const state = ctx.getState();
 
-    ctx.patchState(
-      this.adapter.removeOne(this.getKey(action.payload), state)
-    );
+    ctx.patchState(this.adapter.removeOne(this.getKey(action.payload), state));
   }
 
   protected deleteFailureHandler(ctx, action) {

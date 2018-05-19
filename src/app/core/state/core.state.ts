@@ -2,7 +2,7 @@
 import { MatSnackBar } from '@angular/material';
 import { State, Action, Selector, StateContext } from '@ngxs/store';
 
-import { CoreConfig } from '../models/core.model';
+import { CoreConfig } from '../../shared/models/core.model';
 ​import { SetTitle, DisplayError } from './core.actions';
 
 export type CoreStateModel = CoreConfig;

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Observable, of } from 'rxjs';
 
-import { Project } from '../models';
+import { Project } from '../../shared/models';
 import { CoreStateService } from '../../core/services/core.state.service';
 import { ProjectState } from '../state/project.state';
 

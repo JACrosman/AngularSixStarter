@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import { Course } from '../../models';
+import { Course, Project } from '../../../shared/models';
 import { CoreStateService } from '../../../core';
 import { CourseNewComponent } from '../new/course-new.component';
 
@@ -22,6 +22,9 @@ export class CourseListComponent {
    */
   @Input()
   courses: Course[];
+
+  @Input()
+  project: Project;
 
   /**
    * New course click event

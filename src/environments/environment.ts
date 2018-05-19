@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  api_url: '//localhost:8899/waypoints-server/api',
+  api_url: 'http://localhost:8899/waypoints-server/api',
   token_name: 'wp_token'
 };
 
